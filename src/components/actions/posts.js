@@ -1,14 +1,19 @@
 import axios from "axios";
-import { setIsFetching, setPosts } from "../../reducers/postsReducer";
+import { setError, setIsFetching, setPosts } from "../../reducers/postsReducer";
 
 const BASE_URI = "https://jsonplaceholder.typicode.com";
 const POSTS_URI = `${BASE_URI}/posts`;
 
 export const getPosts = () => {
   return async (dispatch) => {
-    dispatch(setIsFetching(true));
-    const response = await axios.get(POSTS_URI);
-    dispatch(setPosts(normalizePosts(response.data)));
+    try {
+      dispatch(setIsFetching(true));
+      const response = await axios.get(POSTS_URI);
+      dispatch(setPosts(normalizePosts(response.data)));
+    } catch (e) {
+      dispatch(setError(e.message));
+      dispatch(setIsFetching(false));
+    }
   };
 };
 
